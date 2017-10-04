@@ -21,12 +21,12 @@ import static android.content.ContentValues.TAG;
 
 public class DownloadService extends Service {
 
-    private static final String DOWNLOADED_PATH= Environment
+    public static final String DOWNLOADED_PATH= Environment
             .getExternalStorageDirectory().getAbsolutePath()+"/downloaded/";
 
-    private static final String ACTION_START="ACTION_START";
-    private static final String ACTION_STOP="ACTION_STOP";
-    private static final int MSG_INIT=0;
+    public static final String ACTION_START="ACTION_START";
+    public static final String ACTION_STOP="ACTION_STOP";
+    public static final int MSG_INIT=0;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
