@@ -31,6 +31,7 @@ public class DownloadService extends Service {
     public static final String ACTION_UPDATE="ACTION_UPDATE";
     public static final String ACTION_FINISHED="ACTION_FINISHED";
     public static final int MSG_INIT=0;
+    private InitThread mInitThread=null;
     private Map<Integer,DownloadTask> mTasks=new LinkedHashMap<Integer, DownloadTask>();
 
 
@@ -39,7 +40,9 @@ public class DownloadService extends Service {
         if(ACTION_START.equals(intent.getAction())){
             FileInfo fileInfo=(FileInfo)intent.getSerializableExtra("fileInfo");
             Log.i("Test", "Start:"+fileInfo.toString());
-            new InitThread(fileInfo).start();
+         //   new InitThread(fileInfo).start();
+            mInitThread=new InitThread(fileInfo);
+            DownloadTask.sExecutorService.execute(mInitThread);
         }else if(ACTION_STOP.equals(intent.getAction())){
             FileInfo fileInfo=(FileInfo)intent.getSerializableExtra("fileInfo");
             //从map找出DownloadTask

@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import db.ThreadDAO;
 import db.ThreadDAOImpl;
@@ -30,6 +32,8 @@ public class DownloadTask {
     public boolean isPause=false;
     private int mThreadCount=1;  //线程数
     private List<DownloadThread> mThreadList=null;
+    public static ExecutorService sExecutorService=
+            Executors.newCachedThreadPool();
 
     public DownloadTask(Context mContext, FileInfo mFileInfo,int mThreadCount) {
         this.mContext = mContext;
@@ -56,7 +60,9 @@ public class DownloadTask {
         //Start multy download
         for(ThreadInfo info:threads){
             DownloadThread thread=new DownloadThread(info);
-            thread.start();
+        //    thread.start();
+            //使用线程池
+            DownloadTask.sExecutorService.execute(thread);
             //使用线程集合管理
             mThreadList.add(thread);
         }
