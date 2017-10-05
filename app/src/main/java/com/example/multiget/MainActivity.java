@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
         pbProgress.setMax(100);
         final FileInfo fileInfo=new FileInfo(0,"http://gdown.baidu.com/data/wisegame/43e76ce22df64c52/QQ_730.apk\n"
                 ,"test.apk",0,0);
+        tvFileName.setText(fileInfo.getFileNane());
         btStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
