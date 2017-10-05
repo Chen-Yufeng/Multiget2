@@ -120,7 +120,7 @@ public class DownloadTask {
                 mFinished+=mThreadInfo.getFinished();
                 if(conn.getResponseCode()==206){
                     input=conn.getInputStream();
-                    byte[] buffer=new byte[1024];
+                    byte[] buffer=new byte[1024 * 4];
                     int len=-1;
                     long time=System.currentTimeMillis();
                     while((len=input.read(buffer))!=-1){
