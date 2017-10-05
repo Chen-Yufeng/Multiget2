@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.ThreadDAO;
@@ -27,29 +28,64 @@ public class DownloadTask {
     private ThreadDAO mDAO=null;
     private int mFinished=0;
     public boolean isPause=false;
+    private int mThreadCount=1;  //线程数
+    private List<DownloadThread> mThreadList=null;
 
-    public DownloadTask(Context mContext, FileInfo mFileInfo) {
+    public DownloadTask(Context mContext, FileInfo mFileInfo,int mThreadCount) {
         this.mContext = mContext;
         this.mFileInfo = mFileInfo;
+        this.mThreadCount=mThreadCount;
         mDAO=new ThreadDAOImpl(mContext);
     }
 
     public void download(){
-        List<ThreadInfo> threadInfos=mDAO.getThreads(mFileInfo.getUrl());
-        ThreadInfo threadInfo=null;
-        if(threadInfos.size()==0){
-            threadInfo=new ThreadInfo(0,mFileInfo.getUrl(),0,mFileInfo.getLength(),0);
-            Log.i("Task", "filelength="+mFileInfo.getLength());
-       }else{
-            threadInfo=threadInfos.get(0);
-        }
+        List<ThreadInfo> threads=mDAO.getThreads(mFileInfo.getUrl());
 
-        new DownloadThread(threadInfo).start();
+        if(threads.size()==0){
+            int length=mFileInfo.getLength() / mThreadCount;
+            for(int i=0;i<mThreadCount;i++){
+                ThreadInfo threadInfo=new ThreadInfo(i,mFileInfo.getUrl(),length*i,(i+1)*length-1,0);
+                if(i==mThreadCount-1){
+                    threadInfo.setEnd(mFileInfo.getLength());
+                }
+                threads.add(threadInfo);
+            }
+        }
+        mThreadList = new ArrayList<DownloadThread>();
+        //Start multy download
+        for(ThreadInfo info:threads){
+            DownloadThread thread=new DownloadThread(info);
+            thread.start();
+            //使用线程集合管理
+            mThreadList.add(thread);
+        }
+    }
+
+    /**
+     * 同步方法
+     * 判断所有线程
+     */
+    private synchronized void checkAllThreadsFinished(){
+        boolean allFinished= true;
+        //遍历集合
+        for(DownloadThread thread:mThreadList){
+            if(thread.isFinished){
+                allFinished=false;
+                break;
+            }
+        }
+        if(allFinished){
+            //Send Broadcast
+            Intent intent=new Intent(DownloadService.ACTION_FINISHED);
+            intent.putExtra("fileInfo",mFileInfo);
+            mContext.sendBroadcast(intent);
+        }
     }
 
 
     class DownloadThread extends Thread{
         private ThreadInfo mThreadInfo=null;
+        public boolean isFinished=false;
 
         public DownloadThread(ThreadInfo mInfo)
         {
@@ -86,20 +122,22 @@ public class DownloadTask {
                         Log.i("Test", len+"");
                         raf.write(buffer,0,len);
                         mFinished+=len;
+                        mThreadInfo.setFinished(mThreadInfo.getFinished()+len);
                         if(System.currentTimeMillis()-time>500) {
                             time=System.currentTimeMillis();
                             intent.putExtra("finished", mFinished * 100 / mFileInfo.getLength());
+                            intent.putExtra("id",mFileInfo.getId());
                             mContext.sendBroadcast(intent);
                         }
                         if(isPause){
-                            mDAO.updateThread(mThreadInfo.getUrl(),mThreadInfo.getId(),mFinished);
+                            mDAO.updateThread(mThreadInfo.getUrl(),mThreadInfo.getId(),mThreadInfo.getFinished());
                             return;
                         }
                     }
-                    Log.i("Test", len+"");
-                    //记得要删除线程
+                    isFinished=true;
                     mDAO.deleteThread(mThreadInfo.getUrl(),mThreadInfo.getId());
-
+                    //检查是否下完
+                    checkAllThreadsFinished();
                 }
             }catch (Exception e){
                 e.printStackTrace();

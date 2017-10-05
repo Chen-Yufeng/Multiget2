@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import stl.FileInfo;
 
@@ -27,8 +29,10 @@ public class DownloadService extends Service {
     public static final String ACTION_START="ACTION_START";
     public static final String ACTION_STOP="ACTION_STOP";
     public static final String ACTION_UPDATE="ACTION_UPDATE";
+    public static final String ACTION_FINISHED="ACTION_FINISHED";
     public static final int MSG_INIT=0;
-    private DownloadTask mTask=null;
+    private Map<Integer,DownloadTask> mTasks=new LinkedHashMap<Integer, DownloadTask>();
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -38,9 +42,11 @@ public class DownloadService extends Service {
             new InitThread(fileInfo).start();
         }else if(ACTION_STOP.equals(intent.getAction())){
             FileInfo fileInfo=(FileInfo)intent.getSerializableExtra("fileInfo");
-            Log.i("Test", "Stop:"+fileInfo.toString());
-            if(mTask!=null){
-                mTask.isPause=true;
+            //从map找出DownloadTask
+            DownloadTask task=mTasks.get(fileInfo.getId());
+            if(task!=null){
+                //停止
+                task.isPause=true;
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -58,9 +64,11 @@ public class DownloadService extends Service {
                 case MSG_INIT:
                     FileInfo fileInfo=(FileInfo)msg.obj;
                     Log.i("Test", "Init"+fileInfo);
-                    //start task
-                    mTask=new DownloadTask(DownloadService.this,fileInfo);
-                    mTask.download();
+                    //启动下载
+                    DownloadTask task
+                            =new DownloadTask(DownloadService.this,fileInfo,3);//线程数
+                    task.download();
+                    mTasks.put(fileInfo.getId(),task);
                     break;
             }
         }
