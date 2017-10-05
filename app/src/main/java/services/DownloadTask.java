@@ -49,6 +49,7 @@ public class DownloadTask {
                     threadInfo.setEnd(mFileInfo.getLength());
                 }
                 threads.add(threadInfo);
+                mDAO.insertThread(threadInfo);
             }
         }
         mThreadList = new ArrayList<DownloadThread>();
@@ -75,6 +76,7 @@ public class DownloadTask {
             }
         }
         if(allFinished){
+            mDAO.deleteThread(mFileInfo.getUrl());
             //Send Broadcast
             Intent intent=new Intent(DownloadService.ACTION_FINISHED);
             intent.putExtra("fileInfo",mFileInfo);
@@ -94,9 +96,6 @@ public class DownloadTask {
 
         @Override
         public void run() {
-            if(!mDAO.isExists(mThreadInfo.getUrl(),mThreadInfo.getId())){
-                mDAO.insertThread(mThreadInfo);
-            }
             HttpURLConnection conn=null;
             RandomAccessFile raf=null;
             InputStream input=null;
@@ -123,7 +122,7 @@ public class DownloadTask {
                         raf.write(buffer,0,len);
                         mFinished+=len;
                         mThreadInfo.setFinished(mThreadInfo.getFinished()+len);
-                        if(System.currentTimeMillis()-time>500) {
+                        if(System.currentTimeMillis()-time>1000) {
                             time=System.currentTimeMillis();
                             intent.putExtra("finished", mFinished * 100 / mFileInfo.getLength());
                             intent.putExtra("id",mFileInfo.getId());
@@ -135,8 +134,7 @@ public class DownloadTask {
                         }
                     }
                     isFinished=true;
-                    mDAO.deleteThread(mThreadInfo.getUrl(),mThreadInfo.getId());
-                    //检查是否下完
+                   //检查是否下完
                     checkAllThreadsFinished();
                 }
             }catch (Exception e){

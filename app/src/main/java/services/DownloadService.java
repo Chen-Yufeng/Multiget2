@@ -66,7 +66,7 @@ public class DownloadService extends Service {
                     Log.i("Test", "Init"+fileInfo);
                     //启动下载
                     DownloadTask task
-                            =new DownloadTask(DownloadService.this,fileInfo,3);//线程数
+                            =new DownloadTask(DownloadService.this,fileInfo,3);  //线程数
                     task.download();
                     mTasks.put(fileInfo.getId(),task);
                     break;
