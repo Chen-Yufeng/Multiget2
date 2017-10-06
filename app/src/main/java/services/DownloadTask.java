@@ -30,7 +30,7 @@ public class DownloadTask {
     private Context mContext=null;
     private FileInfo mFileInfo=null;
     private ThreadDAO mDAO=null;
-    private int mFinished=0;
+    private long mFinished=0;
     public boolean isPause=false;
     private int mThreadCount=1;  //线程数
     private List<DownloadThread> mThreadList=null;
@@ -50,7 +50,7 @@ public class DownloadTask {
         List<ThreadInfo> threads=mDAO.getThreads(mFileInfo.getUrl());
 
         if(threads.size()==0){
-            int length=mFileInfo.getLength() / mThreadCount;
+            long length=mFileInfo.getLength() / mThreadCount;
             for(int i=0;i<mThreadCount;i++){
                 ThreadInfo threadInfo=new ThreadInfo(i,mFileInfo.getUrl(),length*i,(i+1)*length-1,0);
                 if(i==mThreadCount-1){
@@ -76,7 +76,7 @@ public class DownloadTask {
             public void run() {
                 //发送广播修改Activity进度
                 Intent intent = new Intent(DownloadService.ACTION_UPDATE);
-                intent.putExtra("finished", mFinished * 100 / mFileInfo.getLength());
+                intent.putExtra("finished", (int)(mFinished * 100L / mFileInfo.getLength()));
                 intent.putExtra("id",mFileInfo.getId());
                 mContext.sendBroadcast(intent);
             }
@@ -127,7 +127,7 @@ public class DownloadTask {
                 conn =(HttpURLConnection)url.openConnection();
                 conn.setConnectTimeout(3000);
                 conn.setRequestMethod("GET");
-                int start=mThreadInfo.getStart()+mThreadInfo.getFinished();
+                long start=mThreadInfo.getStart()+mThreadInfo.getFinished();
                 conn.setRequestProperty("Range", "bytes=" + start + "-" + mThreadInfo.getEnd());
                 File file=new File(DownloadService.DOWNLOADED_PATH,mFileInfo.getFileNane());
                 raf=new RandomAccessFile(file,"rwd");
@@ -141,7 +141,6 @@ public class DownloadTask {
                     int len=-1;
                     long time=System.currentTimeMillis();
                     while((len=input.read(buffer))!=-1){
-                        Log.i("Test", len+"");
                         raf.write(buffer,0,len);
                         mFinished+=len;
                         mThreadInfo.setFinished(mThreadInfo.getFinished()+len);

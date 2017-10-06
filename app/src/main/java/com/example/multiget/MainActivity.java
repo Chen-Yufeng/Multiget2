@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -71,6 +72,8 @@ public class MainActivity extends AppCompatActivity{
             if(DownloadService.ACTION_UPDATE.equals(intent.getAction())){
                 int finished=intent.getIntExtra("finished",0);
                 int id=intent.getIntExtra("id",0);
+                //调试
+                Log.d("Test", "finished = "+finished);
                 mAdapter.updateProgress(id,finished);
                 //更新通知
                 mNotificationUtil.updateNotification(id,finished);
@@ -83,6 +86,8 @@ public class MainActivity extends AppCompatActivity{
                         Toast.LENGTH_SHORT).show();
                 //删除通知
                 mNotificationUtil.cancleNotification(fileInfo.getId());
+                //调试
+                Log.d("This", "结束");
             }else if(DownloadService.ACTION_START.equals(intent.getAction())){
                 //显示通知
                 mNotificationUtil.showNitification((FileInfo)intent.getSerializableExtra("fileInfo"));

@@ -2,6 +2,7 @@ package com.example.multiget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,8 @@ public class FileListAdapter extends BaseAdapter {
                     intent.setAction("ACTION_START");
                     intent.putExtra("fileInfo",fileInfo);
                     mContext.startService(intent);
+                    //调试
+                    Log.d("Test", "onClick: start");
                 }
             });
             holder.btStop.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +77,7 @@ public class FileListAdapter extends BaseAdapter {
                     intent.setAction("ACTION_STOP");
                     intent.putExtra("fileInfo",fileInfo);
                     mContext.startService(intent);
+                    Log.d("Test", "onClick: stop");
                 }
             });
             view.setTag(holder);

@@ -10,7 +10,7 @@ public class FileInfo implements Serializable{
     private int id;
     private String url;
     private String fileNane;
-    private int length;
+    private long length;
     private int finished;
 
     @Override
@@ -51,11 +51,11 @@ public class FileInfo implements Serializable{
         this.fileNane = fileNane;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 
@@ -68,7 +68,7 @@ public class FileInfo implements Serializable{
     }
 
 
-    public FileInfo(int id, String url, String fileNane, int length, int finished) {
+    public FileInfo(int id, String url, String fileNane, long length, int finished) {
         this.id = id;
         this.url = url;
         this.fileNane = fileNane;
