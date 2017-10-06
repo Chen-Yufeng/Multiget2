@@ -66,12 +66,16 @@ public class DownloadService extends Service {
             switch (msg.what){
                 case MSG_INIT:
                     FileInfo fileInfo=(FileInfo)msg.obj;
-                    Log.i("Test", "Init"+fileInfo);
+                    //Log.i("Test", "Init"+fileInfo);
                     //启动下载
                     DownloadTask task
                             =new DownloadTask(DownloadService.this,fileInfo,3);  //线程数
                     task.download();
                     mTasks.put(fileInfo.getId(),task);
+                    //发送启动命令广播
+                    Intent intent = new Intent(DownloadService.ACTION_START);
+                    intent.putExtra("fileInfo",fileInfo);
+                    sendBroadcast(intent);
                     break;
             }
         }

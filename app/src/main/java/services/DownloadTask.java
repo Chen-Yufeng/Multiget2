@@ -11,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +36,8 @@ public class DownloadTask {
     private List<DownloadThread> mThreadList=null;
     public static ExecutorService sExecutorService=
             Executors.newCachedThreadPool();
+
+    private Timer mTimer = new Timer();  //定时器
 
     public DownloadTask(Context mContext, FileInfo mFileInfo,int mThreadCount) {
         this.mContext = mContext;
@@ -66,6 +70,17 @@ public class DownloadTask {
             //使用线程集合管理
             mThreadList.add(thread);
         }
+        //启动定时任务
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //发送广播修改Activity进度
+                Intent intent = new Intent(DownloadService.ACTION_UPDATE);
+                intent.putExtra("finished", mFinished * 100 / mFileInfo.getLength());
+                intent.putExtra("id",mFileInfo.getId());
+                mContext.sendBroadcast(intent);
+            }
+        },1000,1000);
     }
 
     /**
@@ -82,6 +97,8 @@ public class DownloadTask {
             }
         }
         if(allFinished){
+            //取消定时器
+            mTimer.cancel();
             mDAO.deleteThread(mFileInfo.getUrl());
             //Send Broadcast
             Intent intent=new Intent(DownloadService.ACTION_FINISHED);
@@ -128,12 +145,6 @@ public class DownloadTask {
                         raf.write(buffer,0,len);
                         mFinished+=len;
                         mThreadInfo.setFinished(mThreadInfo.getFinished()+len);
-                        if(System.currentTimeMillis()-time>1000) {
-                            time=System.currentTimeMillis();
-                            intent.putExtra("finished", mFinished * 100 / mFileInfo.getLength());
-                            intent.putExtra("id",mFileInfo.getId());
-                            mContext.sendBroadcast(intent);
-                        }
                         if(isPause){
                             mDAO.updateThread(mThreadInfo.getUrl(),mThreadInfo.getId(),mThreadInfo.getFinished());
                             return;

@@ -1,5 +1,6 @@
 package com.example.multiget;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +19,14 @@ import java.util.List;
 
 import services.DownloadService;
 import stl.FileInfo;
+import utils.NotificationUtil;
 
 public class MainActivity extends AppCompatActivity{
 
     private ListView mLvFile=null;
     private List<FileInfo> mFileList=null;
     private FileListAdapter mAdapter=null;
+    private NotificationUtil mNotificationUtil = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,10 @@ public class MainActivity extends AppCompatActivity{
         IntentFilter fliter=new IntentFilter();
         fliter.addAction(DownloadService.ACTION_UPDATE);
         fliter.addAction(DownloadService.ACTION_FINISHED);
+        fliter.addAction(DownloadService.ACTION_START);
         registerReceiver(mReceiver,fliter);
+
+        mNotificationUtil = new NotificationUtil(this);
     }
 
     @Override
@@ -66,6 +72,8 @@ public class MainActivity extends AppCompatActivity{
                 int finished=intent.getIntExtra("finished",0);
                 int id=intent.getIntExtra("id",0);
                 mAdapter.updateProgress(id,finished);
+                //更新通知
+                mNotificationUtil.updateNotification(id,finished);
             } else if(DownloadService.ACTION_FINISHED.equals(intent.getAction())){
                 //下载结束
                 FileInfo fileInfo=(FileInfo) intent.getSerializableExtra("fileInfo");
@@ -73,6 +81,11 @@ public class MainActivity extends AppCompatActivity{
                 mAdapter.updateProgress(fileInfo.getId(),0);
                 Toast.makeText(MainActivity.this,mFileList.get(fileInfo.getId()).getFileNane()+"下载完毕",
                         Toast.LENGTH_SHORT).show();
+                //删除通知
+                mNotificationUtil.cancleNotification(fileInfo.getId());
+            }else if(DownloadService.ACTION_START.equals(intent.getAction())){
+                //显示通知
+                mNotificationUtil.showNitification((FileInfo)intent.getSerializableExtra("fileInfo"));
             }
         }
     };
