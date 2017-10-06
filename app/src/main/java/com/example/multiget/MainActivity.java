@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity{
                 //更新通知
                 mNotificationUtil.updateNotification(id,finished);
             } else if(DownloadService.ACTION_FINISHED.equals(intent.getAction())){
+                Log.d("Test", "MainActivity: 下载结束");
                 //下载结束
                 FileInfo fileInfo=(FileInfo) intent.getSerializableExtra("fileInfo");
                 //更新进度为0

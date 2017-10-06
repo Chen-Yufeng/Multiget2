@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/addnew"
         android:background="@null"/>
 
 </RelativeLayout>

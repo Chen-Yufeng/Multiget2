@@ -79,13 +79,28 @@ public class DownloadTask {
                 intent.putExtra("finished", (int)(mFinished * 100L / mFileInfo.getLength()));
                 intent.putExtra("id",mFileInfo.getId());
                 mContext.sendBroadcast(intent);
+                /**if((int)mFinished==100){
+                    allFinished();
+                }*/
             }
         },1000,1000);
     }
 
+    /**private synchronized void allFinished(){
+        //取消定时器
+        mTimer.cancel();
+        mDAO.deleteThread(mFileInfo.getUrl());
+        //Send Broadcast
+        Intent intent=new Intent(DownloadService.ACTION_FINISHED);
+        intent.putExtra("fileInfo",mFileInfo);
+        mContext.sendBroadcast(intent);
+    }*/
+
     /**
      * 同步方法
      * 判断所有线程
+     *
+     * 该方法存在问题，无法被调用！
      */
     private synchronized void checkAllThreadsFinished(){
         boolean allFinished= true;
@@ -95,8 +110,10 @@ public class DownloadTask {
                 allFinished=false;
                 break;
             }
+            Log.d("Test", thread.isFinished+"");
         }
         if(allFinished){
+            Log.d("Test_finished", "checkAllThreadsFinished: allfinished");
             //取消定时器
             mTimer.cancel();
             mDAO.deleteThread(mFileInfo.getUrl());
@@ -150,6 +167,8 @@ public class DownloadTask {
                         }
                     }
                     isFinished=true;
+                    //调试
+                    Log.d("Test", isFinished+"");
                    //检查是否下完
                     checkAllThreadsFinished();
                 }
