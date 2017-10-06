@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +30,44 @@ public class MainActivity extends AppCompatActivity{
     private List<FileInfo> mFileList=null;
     private FileListAdapter mAdapter=null;
     private NotificationUtil mNotificationUtil = null;
+    private ImageButton mImageButton = null;
+    private FileInfo back_fileInfo = null;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if(resultCode==RESULT_OK){
+                    back_fileInfo = (FileInfo) data.getSerializableExtra("fileInfo");
+                    mFileList.add(back_fileInfo);
+                    //添加下载条目
+                    if(mFileList.size()==1){
+                        mAdapter=new FileListAdapter(this,mFileList);
+                        mLvFile.setAdapter(mAdapter);
+                    }else{
+                        mAdapter=new FileListAdapter(this,mFileList);
+                        mLvFile.setAdapter(mAdapter);
+                    }
+                }
+                break;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mImageButton=(ImageButton)findViewById(R.id.NewTask);
         mLvFile=(ListView)findViewById(R.id.LvFile);
         mFileList=new ArrayList<FileInfo>();
+        mImageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,add.class);
+                startActivityForResult(intent,1);
+            }
+        });
+       /**
         final FileInfo fileInfo0=new FileInfo(0,"http://gdown.baidu.com/data/wisegame/43e76ce22df64c52/QQ_730.apk\n"
                 ,"test1.apk",0,0);
         final FileInfo fileInfo1=new FileInfo(1,"http://gdown.baidu.com/data/wisegame/43e76ce22df64c52/QQ_730.apk\n"
@@ -47,7 +80,7 @@ public class MainActivity extends AppCompatActivity{
 
         mAdapter=new FileListAdapter(this,mFileList);
         mLvFile.setAdapter(mAdapter);
-
+*/
 
         //注册广播接收器
         IntentFilter fliter=new IntentFilter();

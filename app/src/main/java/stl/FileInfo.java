@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by If Chan on 2017/10/4.
+ * int id, String url, String fileNane, long length, int finished
  */
 
 public class FileInfo implements Serializable{

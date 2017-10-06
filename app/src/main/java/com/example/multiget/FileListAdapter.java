@@ -98,6 +98,7 @@ public class FileListAdapter extends BaseAdapter {
         notifyDataSetChanged();  //调用getview
     }
 
+
     static class ViewHolder{
         TextView tvFileName;
         Button btStop,btStart;
