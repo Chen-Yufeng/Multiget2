@@ -86,7 +86,7 @@ public class FileListAdapter extends BaseAdapter {
             holder=(ViewHolder)view.getTag();
         }
         holder.pbProgress.setProgress(fileInfo.getFinished());
-        holder.percent.setText("已完成"+fileInfo.getFinished()+"%");
+        holder.percent.setText("已完成"+fileInfo.getFinished()+"% ("+fileInfo.getLength()/(1024*1024)+"Mb)");
 
         return view;
     }

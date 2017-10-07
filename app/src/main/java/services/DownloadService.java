@@ -96,10 +96,10 @@ public class DownloadService extends Service {
                 conn=(HttpURLConnection)url.openConnection();
                 conn.setConnectTimeout(3000);
                 conn.setRequestMethod("GET");
-                int length = -1;
+                long length = -1;
                 if(conn.getResponseCode()==200)
-                    length=conn.getContentLength();
-                if(length<=0)
+                    length=conn.getContentLength();  //兼容？？
+                if(length<=0L)
                     return;
 
                 File dir=new File(DOWNLOADED_PATH);
