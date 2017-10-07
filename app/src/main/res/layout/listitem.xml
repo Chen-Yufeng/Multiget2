@@ -16,6 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvFileName"/>
 
+    <TextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pbProgress"/>
+
     <Button
         android:id="@+id/btStop"
         android:layout_width="wrap_content"

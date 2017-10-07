@@ -57,6 +57,7 @@ public class FileListAdapter extends BaseAdapter {
             holder.btStop=(Button) view.findViewById(R.id.btStop);
             holder.btStart=(Button)view.findViewById(R.id.btStart);
             holder.pbProgress=(ProgressBar) view.findViewById(R.id.pbProgress);
+            holder.percent=(TextView)view.findViewById(R.id.percent);
             holder.tvFileName.setText(fileInfo.getFileNane());
             holder.pbProgress.setMax(100);
             holder.btStart.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +86,7 @@ public class FileListAdapter extends BaseAdapter {
             holder=(ViewHolder)view.getTag();
         }
         holder.pbProgress.setProgress(fileInfo.getFinished());
+        holder.percent.setText("已完成"+fileInfo.getFinished()+"%");
 
         return view;
     }
@@ -100,7 +102,7 @@ public class FileListAdapter extends BaseAdapter {
 
 
     static class ViewHolder{
-        TextView tvFileName;
+        TextView tvFileName,percent;
         Button btStop,btStart;
         ProgressBar pbProgress;
     }
