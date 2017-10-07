@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -39,6 +40,7 @@ public class add extends AppCompatActivity{
         final EditText etUrl=(EditText)findViewById(R.id.back_url);
         Button button = (Button)findViewById(R.id.back_fileinfo);
         Button btPaste = (Button)findViewById(R.id.paste);
+        final TextView tvErrorUrl=(TextView)findViewById(R.id.tvErrorUrl);
         btPaste.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -50,9 +52,12 @@ public class add extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                FileInfo fileInfo = new FileInfo(fileId,etUrl.getText().toString().trim(),etName.getText().toString(),0L,0);
-                new InitThread(fileInfo).start();
-
+                if(etUrl.getText().toString().trim().substring(0,etUrl.getText().toString().trim().indexOf("/")).equals("http:")) {
+                    FileInfo fileInfo = new FileInfo(fileId, etUrl.getText().toString().trim(), etName.getText().toString(), 0L, 0);
+                    new InitThread(fileInfo).start();
+                }else{
+                    tvErrorUrl.setText("Illegal URL");
+                }
             }
         });
     }

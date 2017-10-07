@@ -30,6 +30,15 @@
         android:layout_gravity="right"
         android:text="OK"/>
 
+    <TextView
+        android:id="@+id/tvErrorUrl"
+        android:textSize="20sp"
+        android:layout_gravity="center_vertical"
+        android:gravity="right"
+        android:layout_width="0sp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
 
 </LinearLayout>
