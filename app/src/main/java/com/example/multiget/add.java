@@ -1,5 +1,7 @@
 package com.example.multiget;
 
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +38,15 @@ public class add extends AppCompatActivity{
         final EditText etName = (EditText)findViewById(R.id.back_fileName);
         final EditText etUrl=(EditText)findViewById(R.id.back_url);
         Button button = (Button)findViewById(R.id.back_fileinfo);
+        Button btPaste = (Button)findViewById(R.id.paste);
+        btPaste.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                ClipboardManager plaster  = (ClipboardManager) add.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                String content=plaster.getText().toString().trim();
+                etUrl.setText(content);
+            }
+        });
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {

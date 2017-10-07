@@ -2,6 +2,7 @@ package com.example.multiget;
 
 import android.app.Notification;
 import android.content.BroadcastReceiver;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
