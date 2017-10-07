@@ -23,6 +23,15 @@
         android:layout_below="@id/pbProgress"/>
 
     <Button
+        android:id="@+id/openFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OPEN"
+        android:layout_alignBaseline="@+id/btStart"
+        android:layout_alignBottom="@+id/btStart"
+        android:layout_toStartOf="@+id/btStart" />
+
+    <Button
         android:id="@+id/btStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

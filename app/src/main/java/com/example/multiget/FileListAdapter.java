@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.List;
 
 import services.DownloadService;
@@ -56,10 +57,17 @@ public class FileListAdapter extends BaseAdapter {
             holder.tvFileName=(TextView)view.findViewById(R.id.tvFileName);
             holder.btStop=(Button) view.findViewById(R.id.btStop);
             holder.btStart=(Button)view.findViewById(R.id.btStart);
+            holder.openFile=(Button)view.findViewById(R.id.openFile);
             holder.pbProgress=(ProgressBar) view.findViewById(R.id.pbProgress);
             holder.percent=(TextView)view.findViewById(R.id.percent);
             holder.tvFileName.setText(fileInfo.getFileNane());
             holder.pbProgress.setMax(100);
+            holder.openFile.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    OpenFile openFile=new OpenFile(mContext,new File(DownloadService.DOWNLOADED_PATH+fileInfo.getFileNane()));
+                }
+            });
             holder.btStart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -86,7 +94,7 @@ public class FileListAdapter extends BaseAdapter {
             holder=(ViewHolder)view.getTag();
         }
         holder.pbProgress.setProgress(fileInfo.getFinished());
-        holder.percent.setText("已完成"+fileInfo.getFinished()+"% ("+fileInfo.getLength()/(1024*1024)+"Mb)");
+        holder.percent.setText(fileInfo.getFinished()+"% ("+fileInfo.getLength()/(1024*1024)+"Mb)");
 
         return view;
     }
@@ -103,7 +111,7 @@ public class FileListAdapter extends BaseAdapter {
 
     static class ViewHolder{
         TextView tvFileName,percent;
-        Button btStop,btStart;
+        Button btStop,btStart,openFile;
         ProgressBar pbProgress;
     }
 }

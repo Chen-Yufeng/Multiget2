@@ -158,6 +158,8 @@ public class DownloadTask {
                     int len=-1;
                     long time=System.currentTimeMillis();
                     while((len=input.read(buffer))!=-1){
+                        //最关键的问题!!!
+                        Log.d("lenifchan", "len = "+len);
                         raf.write(buffer,0,len);
                         mFinished+=len;
                         mThreadInfo.setFinished(mThreadInfo.getFinished()+len);
