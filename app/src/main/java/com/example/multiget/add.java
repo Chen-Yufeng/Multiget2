@@ -52,11 +52,11 @@ public class add extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if(etUrl.getText().toString().trim().substring(0,etUrl.getText().toString().trim().indexOf("/")).equals("http:")) {
+                if(etName.getText().toString().length()>0&&etUrl.getText().toString().trim().substring(0,etUrl.getText().toString().trim().indexOf("/")).equals("http:")) {
                     FileInfo fileInfo = new FileInfo(fileId, etUrl.getText().toString().trim(), etName.getText().toString(), 0L, 0);
                     new InitThread(fileInfo).start();
                 }else{
-                    tvErrorUrl.setText("Illegal URL");
+                    tvErrorUrl.setText("Illegal URL or Name");
                 }
             }
         });
